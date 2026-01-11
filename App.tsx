@@ -25,7 +25,8 @@ import {
   Bot,
   Scale,
   Maximize2,
-  Minimize2
+  Minimize2,
+  ChevronDown
 } from 'lucide-react';
 import { Session, SessionStatus, GlossaryTerm } from './types';
 import { COURSE_SESSIONS } from './constants';
@@ -173,114 +174,71 @@ const App: React.FC = () => {
 
   if (view === 'landing') {
     return (
-      <div className="min-h-screen bg-[#fcfaf7] overflow-x-hidden">
-        {/* Hero Section */}
-        <section className="relative h-screen flex items-center justify-center text-center p-6 baroque-gradient overflow-hidden">
-          <div className="absolute inset-0 opacity-10 pointer-events-none parchment-texture"></div>
-          <div className="absolute top-20 left-10 text-[#d4af37]/20 rotate-12 scale-150"><Zap size={400} /></div>
-          <div className="relative z-10 max-w-5xl space-y-8 animate-in fade-in zoom-in-95 duration-1000">
-            <div className="flex justify-center mb-4">
-              <div className="bg-[#d4af37] p-3 rounded-xl shadow-2xl">
-                <BrainCircuit size={48} className="text-[#1a0808]" />
-              </div>
+      <div className="min-h-screen bg-[#0a0505] overflow-x-hidden relative">
+        {/* Background Image with Overlay */}
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-60 transition-opacity duration-1000"
+          style={{ 
+            backgroundImage: "url('https://images.unsplash.com/photo-1550399105-c4db5fb85c18?q=80&w=2071&auto=format&fit=crop')",
+            filter: 'brightness(0.3) contrast(1.1)'
+          }}
+        />
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/80 via-transparent to-black/90" />
+
+        {/* Hero Section Content */}
+        <section className="relative z-10 h-screen flex flex-col items-center justify-center text-center p-6 select-none">
+          <div className="max-w-5xl space-y-8 animate-in fade-in zoom-in-95 duration-1000">
+            <div className="space-y-2">
+              <span className="text-[#d4af37] uppercase tracking-[0.6em] text-sm font-semibold opacity-80 serif">SEMINARIO</span>
+              <h1 className="text-5xl md:text-8xl font-bold text-white leading-tight serif">
+                El Estratega del Ingenio <br />
+                <span className="text-[#d4af37]">y el Código Gracián</span>
+              </h1>
             </div>
-            <h1 className="text-6xl md:text-8xl font-black text-[#fcfaf7] serif tracking-tight">
-              EL ESTRATEGA <span className="text-[#d4af37]">DEL INGENIO</span>
-            </h1>
-            <p className="text-xl md:text-3xl text-gray-300 font-light italic max-w-3xl mx-auto leading-relaxed serif">
-              "Desarrollando la Racionalidad Inventiva para el Siglo XXI. Donde el método falla, el ingenio prevalece."
-            </p>
-            <div className="flex flex-wrap justify-center gap-6 pt-10">
+            
+            <div className="space-y-6">
+              <p className="text-2xl md:text-4xl text-gray-200 font-light italic serif tracking-tight">
+                Forjando la Sagacidad para el Siglo XXI
+              </p>
+              <p className="text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto leading-relaxed serif opacity-80">
+                Un viaje a través de la racionalidad inventiva y los principios estratégicos de la sabiduría clásica.
+              </p>
+            </div>
+
+            <div className="pt-20 flex flex-col items-center gap-4">
               <button 
                 onClick={() => setView('presentation')}
-                className="px-12 py-6 bg-[#d4af37] text-[#1a0808] font-black rounded-full hover:bg-white transition-all hover:scale-105 shadow-2xl flex items-center gap-3 uppercase tracking-widest text-sm"
+                className="group flex flex-col items-center gap-4 text-[#d4af37] hover:text-white transition-all duration-500"
               >
-                Iniciar el Viaje <ChevronRight size={20} />
-              </button>
-              <button 
-                onClick={() => setView('glossary')}
-                className="px-12 py-6 bg-transparent border-2 border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition-all flex items-center gap-3 uppercase tracking-widest text-sm"
-              >
-                Explorar Glosario <BookMarked size={20} />
+                <span className="uppercase tracking-[0.4em] text-xs font-bold border-b border-transparent group-hover:border-[#d4af37] pb-1 transition-all">DESCUBRIR</span>
+                <ChevronDown className="animate-bounce group-hover:scale-125 transition-transform" size={24} />
               </button>
             </div>
           </div>
         </section>
 
-        {/* Info Grid */}
-        <section className="max-w-7xl mx-auto py-32 px-6 grid md:grid-cols-3 gap-12">
-          <div className="space-y-4 p-8 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] transform hover:-translate-y-2 transition-all">
-            <div className="text-[#4a1414] mb-4"><ShieldCheck size={40} /></div>
-            <h3 className="text-2xl font-bold serif text-[#2d0a0a]">Ni Magia ni Método</h3>
-            <p className="text-gray-600 leading-relaxed">Olvídate de las listas de 'pasos para innovar'. Aquí cultivamos una disposición intelectual robusta basada en la filosofía de Moris Polanco.</p>
+        {/* Floating Accents */}
+        <div className="absolute top-12 left-12 border-l border-t border-[#d4af37]/20 w-32 h-32 z-10 hidden md:block" />
+        <div className="absolute bottom-12 right-12 border-r border-b border-[#d4af37]/20 w-32 h-32 z-10 hidden md:block" />
+
+        {/* Additional Info Grid (Optional but kept for depth) */}
+        <section className="relative z-10 max-w-7xl mx-auto py-20 px-6 grid md:grid-cols-3 gap-12 border-t border-white/5 bg-black/40 backdrop-blur-sm">
+          <div className="space-y-4 p-8 border-r border-white/5">
+            <div className="text-[#d4af37] mb-2 opacity-60"><ShieldCheck size={32} /></div>
+            <h3 className="text-xl font-bold serif text-white">Ni Magia ni Método</h3>
+            <p className="text-gray-400 text-sm leading-relaxed serif italic">La disposición intelectual robusta de Moris Polanco frente a la automatización del pensamiento.</p>
           </div>
-          <div className="space-y-4 p-8 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] transform hover:-translate-y-2 transition-all">
-            <div className="text-[#4a1414] mb-4"><Lightbulb size={40} /></div>
-            <h3 className="text-2xl font-bold serif text-[#2d0a0a]">Agudeza Barroca</h3>
-            <p className="text-gray-600 leading-relaxed">Conecta ideas de Aristóteles con el marketing, a Gracián con la programación. Aprende a ver las correspondencias ocultas en la realidad.</p>
+          <div className="space-y-4 p-8 border-r border-white/5">
+            <div className="text-[#d4af37] mb-2 opacity-60"><Lightbulb size={32} /></div>
+            <h3 className="text-xl font-bold serif text-white">Agudeza Barroca</h3>
+            <p className="text-gray-400 text-sm leading-relaxed serif italic">Conecta la sabiduría de Aristóteles y Gracián con la estrategia empresarial contemporánea.</p>
           </div>
-          <div className="space-y-4 p-8 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] transform hover:-translate-y-2 transition-all">
-            <div className="text-[#4a1414] mb-4"><Coins size={40} /></div>
-            <h3 className="text-2xl font-bold serif text-[#2d0a0a]">Arbitraje Intelectual</h3>
-            <p className="text-gray-600 leading-relaxed">Transforma tu 'capital intelectual' en valor real. Identifica oportunidades donde otros solo ven caos o rutina.</p>
+          <div className="space-y-4 p-8">
+            <div className="text-[#d4af37] mb-2 opacity-60"><Coins size={32} /></div>
+            <h3 className="text-xl font-bold serif text-white">Arbitraje de Ideas</h3>
+            <p className="text-gray-400 text-sm leading-relaxed serif italic">Transforma tu capital intelectual en valor real. Identifica brechas donde otros ven rutina.</p>
           </div>
         </section>
-
-        <section className="bg-[#1a0808] text-white py-32 px-6 text-center">
-          <div className="max-w-4xl mx-auto space-y-12">
-            <h2 className="text-4xl md:text-6xl font-bold serif text-[#d4af37]">¿Qué es la Racionalidad Inventiva?</h2>
-            <p className="text-2xl font-light text-gray-300 leading-loose italic">
-              "No es una habilidad innata ni un algoritmo. Es una estrategia para el descubrimiento y la toma de decisiones agudas en un mundo de complejidad creciente. Es el arte de la hipótesis sorprendente."
-            </p>
-            <div className="w-24 h-1 bg-[#d4af37] mx-auto"></div>
-            <div className="grid md:grid-cols-2 gap-12 text-left">
-              <div className="space-y-4">
-                <h4 className="text-[#d4af37] font-bold uppercase tracking-widest text-sm">El Diferenciador</h4>
-                <p className="text-gray-400">Fusionamos la sabiduría de Gracián, Peirce y Kirzner para crear un modelo de pensamiento que monetiza la asimetría de información y la agudeza mental.</p>
-              </div>
-              <div className="space-y-4">
-                <h4 className="text-[#d4af37] font-bold uppercase tracking-widest text-sm">Resultados</h4>
-                <p className="text-gray-400">Al finalizar las 10 sesiones, habrás diseñado tu propio 'Plan Inventivo Personal', capaz de detectar 'arbitrajes' en tu campo profesional.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Ecosistema de Ingenio */}
-        <section className="py-32 bg-[#fcfaf7]">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold serif text-[#2d0a0a] mb-4">Ecosistema de Pensamiento</h2>
-              <p className="text-gray-600 italic">Expande tu racionalidad inventiva con nuestros recursos complementarios.</p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              <a href="https://ingenio-estrategico.lovable.app/" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
-                <Zap className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
-                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Ingenio Estratégico</h3>
-                <p className="text-gray-600 mb-6">Herramientas tácticas para la aplicación inmediata de la agudeza en entornos corporativos.</p>
-                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Visitar Recurso <ExternalLink size={16} /></div>
-              </a>
-              <a href="https://ni-magia-ni-metodo.lovable.app/" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
-                <Bot className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
-                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Chatbot de Agudeza</h3>
-                <p className="text-gray-600 mb-6">Consulta directa con la IA entrenada en el pensamiento de Moris Polanco.</p>
-                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Dialogar <ExternalLink size={16} /></div>
-              </a>
-              <a href="https://portico-logico.lovable.app/" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
-                <Scale className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
-                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Pórtico Lógico</h3>
-                <p className="text-gray-600 mb-6">Fundamentos de lógica y dialéctica para fortalecer el andamiaje de tu ingenio.</p>
-                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Explorar <ExternalLink size={16} /></div>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <footer className="py-20 text-center border-t border-[#e2d6c3]">
-          <button onClick={() => setView('presentation')} className="text-[#4a1414] font-black serif text-4xl hover:text-[#d4af37] transition-all">
-            Comienza tu Transformación <ArrowRight className="inline ml-2" />
-          </button>
-        </footer>
       </div>
     );
   }
