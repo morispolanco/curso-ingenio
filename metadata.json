@@ -1,0 +1,7 @@
+{
+  "name": "El Estratega del Ingenio",
+  "description": "Curso interactivo de Racionalidad Inventiva basado en las obras de Moris Polanco y la prudencia de Baltasar Gracián.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
