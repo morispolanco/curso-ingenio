@@ -189,7 +189,7 @@ const App: React.FC = () => {
         <section className="relative z-10 h-screen flex flex-col items-center justify-center text-center p-6 select-none">
           <div className="max-w-5xl space-y-8 animate-in fade-in zoom-in-95 duration-1000">
             <div className="space-y-2">
-              <span className="text-[#d4af37] uppercase tracking-[0.6em] text-sm font-semibold opacity-80 serif">SEMINARIO</span>
+              <span className="text-[#d4af37] uppercase tracking-[0.6em] text-sm font-semibold opacity-80 serif">CURSO</span>
               <h1 className="text-5xl md:text-8xl font-bold text-white leading-tight serif">
                 El Estratega del Ingenio <br />
                 <span className="text-[#d4af37]">y el Código Gracián</span>
