@@ -11,6 +11,11 @@ export interface ClassicalReading {
   excerpt: string;
 }
 
+export interface IllustrativeCase {
+  title: string;
+  description: string;
+}
+
 export interface Exercise {
   id: string;
   type: 'open' | 'arbitrage' | 'translation' | 'devil';
@@ -26,6 +31,7 @@ export interface Session {
   concepts: string[];
   status: SessionStatus;
   content: string;
+  cases: IllustrativeCase[];
   classicalReading: ClassicalReading;
   exercises: Exercise[];
   closingQuote: string;

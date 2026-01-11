@@ -19,15 +19,22 @@ import {
   ArrowRight,
   ShieldCheck,
   Lightbulb,
-  Coins
+  Coins,
+  Puzzle,
+  ExternalLink,
+  Bot,
+  Scale,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { Session, SessionStatus, GlossaryTerm } from './types';
 import { COURSE_SESSIONS } from './constants';
 import { GLOSSARY } from './glossary';
+import { PRESENTATION_SLIDES } from './presentation';
 import { getTutorFeedback } from './services/gemini';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<'landing' | 'course' | 'glossary'>('landing');
+  const [view, setView] = useState<'landing' | 'course' | 'glossary' | 'presentation'>('landing');
   const [sessions, setSessions] = useState<Session[]>(COURSE_SESSIONS);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -36,6 +43,7 @@ const App: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
   const [highlightedTerm, setHighlightedTerm] = useState<string | null>(null);
+  const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
 
   const currentSession = sessions[currentIdx];
 
@@ -62,47 +70,89 @@ const App: React.FC = () => {
     setView('glossary');
   };
 
-  // Helper para renderizar texto con enlaces al glosario
-  const renderWithLinks = (text: string) => {
-    const terms = GLOSSARY.map(t => t.term);
-    // Sort terms by length descending to match longest terms first (e.g. "Arbitraje Intelectual" before "Arbitraje")
-    const sortedTerms = [...terms].sort((a, b) => b.length - a.length);
-    
-    // Fix: Use React.ReactNode[] instead of the JSX namespace to resolve missing namespace errors
-    let parts: React.ReactNode[] = [text];
-    
-    sortedTerms.forEach(term => {
-      // Fix: Use React.ReactNode[] instead of the JSX namespace to resolve missing namespace errors
-      const newParts: React.ReactNode[] = [];
-      parts.forEach(part => {
-        if (typeof part !== 'string') {
-          newParts.push(part);
-          return;
+  // Helper para renderizar texto con enlaces al glosario y formato básico
+  const renderWithLinks = (text: string): React.ReactNode[] => {
+    // 1. Procesar etiquetas HTML básicas (b, i) primero
+    const processFormatTags = (input: string): React.ReactNode[] => {
+      const parts: React.ReactNode[] = [];
+      const tagRegex = /<(b|i)>(.*?)<\/\1>/gi;
+      let lastIndex = 0;
+      let match;
+
+      while ((match = tagRegex.exec(input)) !== null) {
+        // Texto previo al tag
+        if (match.index > lastIndex) {
+          parts.push(input.substring(lastIndex, match.index));
         }
-        
-        const regex = new RegExp(`(${term})`, 'gi');
-        const split = part.split(regex);
-        
-        split.forEach((subPart, i) => {
-          if (subPart.toLowerCase() === term.toLowerCase()) {
-            newParts.push(
-              <button
-                key={`${term}-${i}`}
-                onClick={() => openGlossaryAt(term)}
-                className="text-[#4a1414] font-bold underline decoration-[#d4af37]/40 hover:decoration-[#d4af37] transition-all cursor-help"
-              >
-                {subPart}
-              </button>
-            );
-          } else if (subPart !== "") {
-            newParts.push(subPart);
+        // Contenido del tag
+        const tag = match[1].toLowerCase();
+        const content = match[2];
+        if (tag === 'b') {
+          parts.push(<b key={`b-${match.index}`}>{content}</b>);
+        } else if (tag === 'i') {
+          parts.push(<i key={`i-${match.index}`}>{content}</i>);
+        }
+        lastIndex = tagRegex.lastIndex;
+      }
+      if (lastIndex < input.length) {
+        parts.push(input.substring(lastIndex));
+      }
+      return parts;
+    };
+
+    // 2. Procesar términos del glosario en los nodos de texto resultantes
+    const processGlossary = (nodes: React.ReactNode[]): React.ReactNode[] => {
+      const terms = GLOSSARY.map(t => t.term);
+      const sortedTerms = [...terms].sort((a, b) => b.length - a.length);
+      
+      let currentNodes = [...nodes];
+      
+      sortedTerms.forEach(term => {
+        const nextNodes: React.ReactNode[] = [];
+        currentNodes.forEach(node => {
+          if (typeof node !== 'string') {
+            nextNodes.push(node);
+            return;
           }
+          
+          const regex = new RegExp(`(${term})`, 'gi');
+          const split = node.split(regex);
+          
+          split.forEach((subPart, i) => {
+            if (subPart.toLowerCase() === term.toLowerCase()) {
+              nextNodes.push(
+                <button
+                  key={`${term}-${i}`}
+                  onClick={() => openGlossaryAt(term)}
+                  className="text-[#4a1414] font-bold underline decoration-[#d4af37]/40 hover:decoration-[#d4af37] transition-all cursor-help"
+                >
+                  {subPart}
+                </button>
+              );
+            } else if (subPart !== "") {
+              nextNodes.push(subPart);
+            }
+          });
         });
+        currentNodes = nextNodes;
       });
-      parts = newParts;
-    });
-    
-    return parts;
+      return currentNodes;
+    };
+
+    // Primero manejamos el formato, luego el glosario
+    const formattedNodes = processFormatTags(text);
+    // Para cada nodo de texto plano dentro de los nodos formateados, buscamos términos del glosario
+    return formattedNodes.map((node, index) => {
+      if (typeof node === 'string') {
+        return processGlossary([node]);
+      }
+      // Si ya es un elemento (como <b> o <i>), procesamos su contenido si es string
+      if (React.isValidElement(node) && typeof node.props.children === 'string') {
+        const processedChildren = processGlossary([node.props.children]);
+        return React.cloneElement(node as React.ReactElement, { key: index, children: processedChildren });
+      }
+      return node;
+    }).flat();
   };
 
   const submitAnswer = async () => {
@@ -118,9 +168,6 @@ const App: React.FC = () => {
 
     const updatedSessions = [...sessions];
     updatedSessions[currentIdx].status = SessionStatus.COMPLETED;
-    if (currentIdx < sessions.length - 1) {
-      updatedSessions[currentIdx + 1].status = SessionStatus.UNLOCKED;
-    }
     setSessions(updatedSessions);
   };
 
@@ -145,7 +192,7 @@ const App: React.FC = () => {
             </p>
             <div className="flex flex-wrap justify-center gap-6 pt-10">
               <button 
-                onClick={() => setView('course')}
+                onClick={() => setView('presentation')}
                 className="px-12 py-6 bg-[#d4af37] text-[#1a0808] font-black rounded-full hover:bg-white transition-all hover:scale-105 shadow-2xl flex items-center gap-3 uppercase tracking-widest text-sm"
               >
                 Iniciar el Viaje <ChevronRight size={20} />
@@ -199,14 +246,121 @@ const App: React.FC = () => {
           </div>
         </section>
 
+        {/* Ecosistema de Ingenio */}
+        <section className="py-32 bg-[#fcfaf7]">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold serif text-[#2d0a0a] mb-4">Ecosistema de Pensamiento</h2>
+              <p className="text-gray-600 italic">Expande tu racionalidad inventiva con nuestros recursos complementarios.</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              <a href="https://ingenio-estrategico.lovable.app/" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
+                <Zap className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
+                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Ingenio Estratégico</h3>
+                <p className="text-gray-600 mb-6">Herramientas tácticas para la aplicación inmediata de la agudeza en entornos corporativos.</p>
+                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Visitar Recurso <ExternalLink size={16} /></div>
+              </a>
+              <a href="https://ni-magia-ni-metodo.lovable.app/" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
+                <Bot className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
+                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Chatbot de Agudeza</h3>
+                <p className="text-gray-600 mb-6">Consulta directa con la IA entrenada en el pensamiento de Moris Polanco.</p>
+                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Dialogar <ExternalLink size={16} /></div>
+              </a>
+              <a href="https://portico-logico.lovable.app/" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
+                <Scale className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
+                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Pórtico Lógico</h3>
+                <p className="text-gray-600 mb-6">Fundamentos de lógica y dialéctica para fortalecer el andamiaje de tu ingenio.</p>
+                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Explorar <ExternalLink size={16} /></div>
+              </a>
+            </div>
+          </div>
+        </section>
+
         <footer className="py-20 text-center border-t border-[#e2d6c3]">
-          <button onClick={() => setView('course')} className="text-[#4a1414] font-black serif text-4xl hover:text-[#d4af37] transition-all">
+          <button onClick={() => setView('presentation')} className="text-[#4a1414] font-black serif text-4xl hover:text-[#d4af37] transition-all">
             Comienza tu Transformación <ArrowRight className="inline ml-2" />
           </button>
         </footer>
       </div>
     );
   }
+
+  const renderPresentation = () => {
+    const slide = PRESENTATION_SLIDES[currentSlideIdx];
+    return (
+      <section className="min-h-[80vh] flex flex-col justify-center animate-in fade-in zoom-in-95 duration-700">
+        <div className="bg-white p-12 md:p-16 rounded-[2.5rem] shadow-baroque border border-[#e2d6c3] relative overflow-hidden parchment-texture">
+          {/* Decorative Elements */}
+          <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+             <ScrollText size={500} />
+          </div>
+          <div className="absolute -bottom-24 -left-24 text-[#d4af37]/10 rotate-12">
+            <BrainCircuit size={400} />
+          </div>
+
+          <div className="relative z-10 space-y-10 max-w-4xl mx-auto">
+             <div className="flex items-center justify-between border-b border-[#e2d6c3] pb-6 mb-6">
+                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-[#d4af37]">Manifiesto del Ingenio / Diapositiva {slide.id} de {PRESENTATION_SLIDES.length}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#4a1414]">Techno-Baroque Editorial</span>
+             </div>
+
+             <div className="space-y-4">
+                <h2 className="text-4xl md:text-6xl font-bold serif text-[#1a0808] leading-tight">{slide.title}</h2>
+                {slide.subtitle && <p className="text-xl md:text-2xl text-[#d4af37] font-black serif italic tracking-tight">{slide.subtitle}</p>}
+             </div>
+
+             {slide.quote && (
+                <div className="p-8 bg-[#f4ece1] rounded-2xl border-l-8 border-[#d4af37] italic font-serif text-2xl text-[#5a4632] leading-relaxed">
+                   "{slide.quote}"
+                </div>
+             )}
+
+             <div className="grid gap-8">
+                {slide.content.map((para, i) => (
+                  <div key={i} className="prose prose-stone prose-xl text-[#3a3a3a] font-serif leading-relaxed text-justify">
+                    {renderWithLinks(para)}
+                  </div>
+                ))}
+             </div>
+
+             <div className="flex items-center justify-between pt-12 border-t border-[#e2d6c3]">
+                <button 
+                  onClick={() => setCurrentSlideIdx(Math.max(0, currentSlideIdx - 1))}
+                  disabled={currentSlideIdx === 0}
+                  className="flex items-center gap-2 p-4 text-[#4a1414] hover:bg-[#f4ece1] rounded-full transition-all disabled:opacity-20"
+                >
+                  <ChevronLeft size={32} />
+                  <span className="text-xs font-bold uppercase tracking-widest">Anterior</span>
+                </button>
+
+                <div className="flex gap-2">
+                  {PRESENTATION_SLIDES.map((_, i) => (
+                    <div key={i} className={`w-2 h-2 rounded-full transition-all ${i === currentSlideIdx ? 'bg-[#d4af37] w-6' : 'bg-[#e2d6c3]'}`} />
+                  ))}
+                </div>
+
+                {currentSlideIdx === PRESENTATION_SLIDES.length - 1 ? (
+                  <button 
+                    onClick={() => setView('course')}
+                    className="px-10 py-5 bg-[#4a1414] text-[#d4af37] font-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl flex items-center gap-3 text-xs uppercase tracking-[0.2em]"
+                  >
+                    Iniciar Sesión 1 <ArrowRight size={18} />
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => setCurrentSlideIdx(currentSlideIdx + 1)}
+                    className="flex items-center gap-2 p-4 text-[#4a1414] hover:bg-[#f4ece1] rounded-full transition-all"
+                  >
+                    <span className="text-xs font-bold uppercase tracking-widest">Siguiente</span>
+                    <ChevronRight size={32} />
+                  </button>
+                )}
+             </div>
+          </div>
+        </div>
+      </section>
+    );
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#fcfaf7]">
@@ -230,20 +384,16 @@ const App: React.FC = () => {
             <button
               key={session.id}
               onClick={() => {
-                if (session.status !== SessionStatus.LOCKED) {
-                  setCurrentIdx(index);
-                  setFeedback(null);
-                  setUserInput("");
-                  setShowLibrary(false);
-                  setView('course');
-                }
+                setCurrentIdx(index);
+                setFeedback(null);
+                setUserInput("");
+                setShowLibrary(false);
+                setView('course');
               }}
               className={`
-                w-full text-left p-4 rounded-lg transition-all flex items-start gap-3
+                w-full text-left p-4 rounded-lg transition-all flex items-start gap-3 cursor-pointer
                 ${(currentIdx === index && view === 'course') ? 'bg-[#5a1a1a] shadow-inner ring-1 ring-[#d4af37]' : 'hover:bg-white/5'}
-                ${session.status === SessionStatus.LOCKED ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
-              disabled={session.status === SessionStatus.LOCKED}
             >
               <div className="mt-1">
                 {session.status === SessionStatus.COMPLETED ? (
@@ -264,19 +414,33 @@ const App: React.FC = () => {
 
         <div className="p-4 border-t border-[#5a1a1a] space-y-2 bg-[#2d0a0a]/50">
           <button 
+            onClick={() => { setView('presentation'); setCurrentSlideIdx(0); }}
+            className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all text-sm font-bold uppercase tracking-wider ${view === 'presentation' ? 'bg-[#d4af37] text-[#1a0808]' : 'text-[#d4af37] hover:bg-white/5'}`}
+          >
+            <Compass size={18} />
+            Presentación
+          </button>
+          <button 
             onClick={() => { setView('glossary'); setHighlightedTerm(null); }}
             className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all text-sm font-bold uppercase tracking-wider ${view === 'glossary' ? 'bg-[#d4af37] text-[#1a0808]' : 'text-[#d4af37] hover:bg-white/5'}`}
           >
             <BookMarked size={18} />
             Glosario Crítico
           </button>
-          <button 
-            onClick={() => setView('landing')}
-            className="w-full flex items-center gap-3 p-3 rounded-lg text-white/50 hover:text-white transition-all text-sm font-bold uppercase tracking-wider"
-          >
-            <Compass size={18} />
-            Presentación
-          </button>
+
+          {/* Links Ecosistema Sidebar */}
+          <div className="pt-4 mt-2 border-t border-white/10 space-y-1">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-bold mb-2 ml-3">Ecosistema de Ingenio</p>
+            <a href="https://ingenio-estrategico.lovable.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full px-3 py-2 text-[11px] text-white/60 hover:text-[#d4af37] hover:bg-white/5 rounded transition-all font-medium">
+              Ingenio Estratégico <ExternalLink size={12} />
+            </a>
+            <a href="https://ni-magia-ni-metodo.lovable.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full px-3 py-2 text-[11px] text-white/60 hover:text-[#d4af37] hover:bg-white/5 rounded transition-all font-medium">
+              El Chatbot IA <ExternalLink size={12} />
+            </a>
+            <a href="https://portico-logico.lovable.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full px-3 py-2 text-[11px] text-white/60 hover:text-[#d4af37] hover:bg-white/5 rounded transition-all font-medium">
+              Pórtico Lógico <ExternalLink size={12} />
+            </a>
+          </div>
         </div>
       </aside>
 
@@ -337,6 +501,8 @@ const App: React.FC = () => {
                 ))}
               </div>
             </section>
+          ) : view === 'presentation' ? (
+            renderPresentation()
           ) : (
             <>
               <header className="space-y-4">
@@ -393,21 +559,42 @@ const App: React.FC = () => {
                 </section>
               ) : (
                 <>
-                  <section className="prose prose-lg max-w-none text-[#2d2d2d] leading-relaxed">
+                  <section className="space-y-12">
+                    {/* Teoría Extendida */}
                     <div className="bg-white p-12 rounded-3xl shadow-baroque parchment-texture border border-[#e2d6c3] relative overflow-hidden group hover:border-[#d4af37]/30 transition-all">
                        <div className="absolute top-4 right-4 text-[#4a1414]/5">
                          <BookMarked size={120} />
                        </div>
                        <div className="mb-6 flex items-center gap-3 text-[#4a1414] font-black text-[10px] uppercase tracking-[0.3em]">
                          <div className="w-12 h-[1.5px] bg-[#4a1414]"></div>
-                         Voz de Moris Polanco
+                         Teoría de la Racionalidad Inventiva
                        </div>
-                       <p className="text-2xl leading-relaxed first-letter:text-7xl first-letter:font-bold first-letter:mr-4 first-letter:float-left first-letter:text-[#4a1414] first-letter:serif text-justify text-[#3a3a3a] font-serif italic">
-                         {renderWithLinks(currentSession.content)}
-                       </p>
+                       <div className="prose prose-stone prose-xl text-[#3a3a3a] font-serif leading-relaxed text-justify space-y-6">
+                         {currentSession.content.split('\n\n').map((para, i) => (
+                           <div key={i} className={i === 0 ? "first-letter:text-7xl first-letter:font-bold first-letter:mr-4 first-letter:float-left first-letter:text-[#4a1414] first-letter:mt-2" : ""}>
+                             {renderWithLinks(para)}
+                           </div>
+                         ))}
+                       </div>
                     </div>
 
-                    <div className="mt-16 grid md:grid-cols-3 gap-8">
+                    {/* Casos Ilustrativos */}
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3 text-[#4a1414] font-black text-[10px] uppercase tracking-[0.3em]">
+                        <Puzzle size={20} />
+                        Casos Ilustrativos
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-8">
+                        {currentSession.cases.map((c, i) => (
+                          <div key={i} className="bg-[#f4ece1] p-8 rounded-3xl border border-[#d4af37]/20 hover:shadow-xl transition-all h-full flex flex-col">
+                            <h4 className="text-2xl font-bold serif text-[#4a1414] mb-4">{c.title}</h4>
+                            <div className="text-lg text-[#5a4632] leading-relaxed italic flex-1">{renderWithLinks(c.description)}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
                       {currentSession.concepts.map((concept, i) => (
                         <div key={i} className="p-6 bg-[#f4ece1] rounded-2xl border-l-4 border-[#4a1414] hover:shadow-xl hover:scale-105 transition-all cursor-default">
                           <span className="text-[10px] text-[#4a1414] font-black uppercase tracking-[0.2em] opacity-60">Axioma Clave</span>
@@ -495,9 +682,9 @@ const App: React.FC = () => {
               )}
 
               <footer className="text-center py-24 border-t border-[#e2d6c3] mt-24">
-                 <p className="text-4xl italic text-[#4a1414] serif max-w-4xl mx-auto leading-tight">
-                   {currentSession.closingQuote}
-                 </p>
+                 <div className="text-4xl italic text-[#4a1414] serif max-w-4xl mx-auto leading-tight">
+                   {renderWithLinks(currentSession.closingQuote)}
+                 </div>
                  <div className="mt-10 flex justify-center gap-4">
                     {[...Array(3)].map((_, i) => <div key={i} className="w-3 h-3 rounded-full bg-[#d4af37]/40" />)}
                  </div>
@@ -520,10 +707,10 @@ const App: React.FC = () => {
           
           <button
             onClick={handleNext}
-            disabled={currentIdx === sessions.length - 1 || sessions[currentIdx].status !== SessionStatus.COMPLETED || view !== 'course'}
+            disabled={currentIdx === sessions.length - 1 || view !== 'course'}
             className={`
               pointer-events-auto px-12 py-6 rounded-full bg-[#4a1414] text-[#d4af37] shadow-2xl flex items-center gap-4 transition-all
-              ${(currentIdx === sessions.length - 1 || sessions[currentIdx].status !== SessionStatus.COMPLETED || view !== 'course') ? 'opacity-0 scale-50' : 'hover:scale-110 active:scale-95 hover:bg-[#2d0a0a] ring-4 ring-[#d4af37]/20'}
+              ${(currentIdx === sessions.length - 1 || view !== 'course') ? 'opacity-0 scale-50' : 'hover:scale-110 active:scale-95 hover:bg-[#2d0a0a] ring-4 ring-[#d4af37]/20'}
             `}
           >
             <span className="font-black uppercase tracking-[0.2em] text-sm">Próxima Agudeza</span>
