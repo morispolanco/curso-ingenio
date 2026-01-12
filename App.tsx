@@ -26,7 +26,8 @@ import {
   Scale,
   Maximize2,
   Minimize2,
-  ChevronDown
+  ChevronDown,
+  PenTool
 } from 'lucide-react';
 import { Session, SessionStatus, GlossaryTerm } from './types';
 import { COURSE_SESSIONS } from './constants';
@@ -239,6 +240,48 @@ const App: React.FC = () => {
             <p className="text-gray-400 text-sm leading-relaxed serif italic">Transforma tu capital intelectual en valor real. Identifica brechas donde otros ven rutina.</p>
           </div>
         </section>
+
+        {/* Ecosistema de Ingenio */}
+        <section className="py-32 bg-[#fcfaf7] relative z-10">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold serif text-[#2d0a0a] mb-4">Ecosistema de Pensamiento</h2>
+              <p className="text-gray-600 italic">Expande tu racionalidad inventiva con nuestros recursos complementarios.</p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <a href="https://ingenio-estrategico.lovable.app/" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
+                <Zap className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
+                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Ingenio Estratégico</h3>
+                <p className="text-gray-600 mb-6">Herramientas tácticas para la aplicación inmediata de la agudeza en entornos corporativos.</p>
+                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Visitar Recurso <ExternalLink size={16} /></div>
+              </a>
+              <a href="https://el-oraculo.lovable.app" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
+                <Bot className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
+                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Chatbot de Agudeza</h3>
+                <p className="text-gray-600 mb-6">Consulta directa con la IA entrenada en el pensamiento de Moris Polanco.</p>
+                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Dialogar <ExternalLink size={16} /></div>
+              </a>
+              <a href="https://portico-logico.lovable.app/" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
+                <Scale className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
+                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Pórtico Lógico</h3>
+                <p className="text-gray-600 mb-6">Fundamentos de lógica y dialéctica para fortalecer el andamiaje de tu ingenio.</p>
+                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Explorar <ExternalLink size={16} /></div>
+              </a>
+              <a href="https://bloguero-estilita.lovable.app/" target="_blank" rel="noopener noreferrer" className="group p-10 bg-white rounded-3xl shadow-xl border border-[#e2d6c3] hover:border-[#d4af37] transition-all transform hover:-translate-y-2">
+                <ScrollText className="text-[#d4af37] mb-6 group-hover:scale-110 transition-transform" size={40} />
+                <h3 className="text-2xl font-bold serif text-[#2d0a0a] mb-3">El Bloguero Estilita</h3>
+                <p className="text-gray-600 mb-6">Reflexiones agudas y dislocaciones anacrónicas desde la columna del pensamiento digital.</p>
+                <div className="flex items-center gap-2 text-[#4a1414] font-bold text-sm uppercase tracking-widest">Leer Bitácora <ExternalLink size={16} /></div>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <footer className="relative z-10 py-20 text-center border-t border-[#e2d6c3] bg-white">
+          <button onClick={() => setView('presentation')} className="text-[#4a1414] font-black serif text-4xl hover:text-[#d4af37] transition-all">
+            Comienza tu Transformación <ArrowRight className="inline ml-2" />
+          </button>
+        </footer>
       </div>
     );
   }
@@ -392,11 +435,14 @@ const App: React.FC = () => {
             <a href="https://ingenio-estrategico.lovable.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full px-3 py-2 text-[11px] text-white/60 hover:text-[#d4af37] hover:bg-white/5 rounded transition-all font-medium">
               Ingenio Estratégico <ExternalLink size={12} />
             </a>
-            <a href="https://ni-magia-ni-metodo.lovable.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full px-3 py-2 text-[11px] text-white/60 hover:text-[#d4af37] hover:bg-white/5 rounded transition-all font-medium">
+            <a href="https://el-oraculo.lovable.app" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full px-3 py-2 text-[11px] text-white/60 hover:text-[#d4af37] hover:bg-white/5 rounded transition-all font-medium">
               El Chatbot IA <ExternalLink size={12} />
             </a>
             <a href="https://portico-logico.lovable.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full px-3 py-2 text-[11px] text-white/60 hover:text-[#d4af37] hover:bg-white/5 rounded transition-all font-medium">
               Pórtico Lógico <ExternalLink size={12} />
+            </a>
+            <a href="https://bloguero-estilita.lovable.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between w-full px-3 py-2 text-[11px] text-white/60 hover:text-[#d4af37] hover:bg-white/5 rounded transition-all font-medium">
+              El Bloguero Estilita <ExternalLink size={12} />
             </a>
           </div>
         </div>

@@ -12,36 +12,36 @@ export interface Slide {
 export const PRESENTATION_SLIDES: Slide[] = [
   {
     id: 1,
-    title: "El Manifiesto del Ingenio",
-    subtitle: "Soberanía cognitiva en la era del algoritmo",
-    quote: "Este curso no es un manual de eficiencia mecánica, sino una guía para pensar como un humano en un mundo de máquinas.",
+    title: "La arquitectura del relámpago",
+    subtitle: "El estratega del ingenio y la rebelión de la mirada",
+    quote: "Vivimos en una época que padece de una hipertrofia de la información y una atrofia de la mirada.",
     content: [
-      "<b>Fundamentos y Autoridad:</b> Esta experiencia se cimenta en la <i>Racionalidad Inventiva</i> de Moris Polanco, integrando la agudeza de Baltasar Gracián con la lógica abductiva de Peirce. No buscamos la 'asepsia' técnica, sino la <b>Modernidad Abigarrada</b> donde conviven lo antiguo y lo futuro.",
-      "<b>Por qué es Vital:</b> La modernidad nos ha convertido en jueces que solo aceptan pruebas perfectas, perdiendo la capacidad de explorar lo probable. En un mundo saturado de IA probabilística —que tiende al promedio y al cliché—, el ingenio es la única <b>Ventaja Humana</b> real: la intención frente a la estadística.",
-      "<b>Nuestra Distinción:</b> A diferencia de los métodos rígidos que 'diseñan todo a priori' (Catedrales), proponemos una <b>Racionalidad Ecológica</b> (Bazares) que permite la emergencia del hallazgo. Aquí, la imperfección es nuestra soberanía y la fricción es el motor de la tracción cognitiva."
+      "<b>El Asedio de la Obviedad:</b> Nos hemos convertido en mineros de lo evidente, olvidando que la verdadera inteligencia reside en establecer conexiones donde otros solo ven silencio. Este curso propone una <i>metanoia intelectual</i>: el retorno al ingenio como facultad arquitectónica.",
+      "<b>Racionalidad Inventiva:</b> Frente a la lógica lineal de la eficiencia algorítmica, reivindicamos la capacidad de percibir la <i>ratio oculta</i> entre las cosas. No se trata de inventar de la nada, sino de reordenar lo existente con una agudeza tal que el resultado parezca una revelación.",
+      "<b>Soberanía Cognitiva:</b> En un mundo diseñado para domesticar la mente, el ingenio es un acto de resistencia. Es la decisión de no ser meros consumidores de pensamiento ajeno, sino productores de sentido propio."
     ],
     type: 'intro'
   },
   {
     id: 2,
-    title: "La Geografía del Hallazgo",
-    subtitle: "Un itinerario de 10 estaciones estratégicas",
+    title: "La Tópica de la Exploración",
+    subtitle: "Más allá del silogismo: Abducción y Kairós",
     content: [
-      "<b>Qué cubriremos:</b> Viajaremos desde el desmantelamiento de la <b>Ceguera del Método</b> hasta la maestría en la <b>Dislocación Anacrónica</b>. Entrenarás el 'instinto disciplinado' para ver anomalías donde otros ven normalidad.",
-      "<b>El Andamiaje Mental:</b> El curso te dotará de una <b>Neo-Tópica</b>: un sistema de 'lugares' para interrogar la realidad y forzar el hallazgo. Aprenderás que innovar no es 'crear de la nada', sino encontrar lo que ya está ahí mediante el <b>Ingenio y la Agudeza</b>.",
-      "<b>Filosofía de Vuelo:</b> No razonaremos por analogía con lo que otros hacen, sino por <i>Primeros Principios</i>. Dejaremos de ser <i>Homo Oeconomicus</i> (calculadores) para convertirnos en <i>Homo Inveniens</i> (exploradores) capaces de 'cazar' la verdad en la ocasión (Kairos)."
+      "<b>Gimnasia del Espíritu:</b> A través de 10 estaciones estratégicas, cultivaremos la <b>Alerta Kirzneriana</b>: esa vigilancia ante las oportunidades que la estadística desprecia. Aprenderemos que el mapa no es el territorio y que los tesoros suelen habitar en los márgenes.",
+      "<b>El Arte de la Abducción:</b> Si la lógica es el bisturí que divide, la tópica es el hilo que cose. Practicaremos el salto creativo que propone hipótesis basadas en la belleza y la economía de la explicación, interrogando al objeto desde ángulos imprevistos.",
+      "<b>El Tiempo de la Ocasión:</b> Operaremos bajo el signo del <i>Kairós</i>, reconociendo el instante sagrado donde una idea puede cambiar el curso de una vida. El ingenio es la sagacidad para ver el futuro en el germen del presente."
     ],
     type: 'concept'
   },
   {
     id: 3,
-    title: "Resultados: El Héroe del Ingenio",
-    subtitle: "De curador de datos a arquitecto de valor",
-    quote: "El mapa ha sido trazado, pero el territorio te pertenece solo a ti.",
+    title: "El Triunfo de la Persona",
+    subtitle: "Redibujando las reglas del juego",
+    quote: "¿Será usted capaz de ver el relámpago antes de que suene el trueno?",
     content: [
-      "<b>Qué obtendrás:</b> La facultad de realizar el <b>Arbitraje Intelectual</b>: identificar ignorancia radical en el mercado y capitalizarla con costo nulo. Aprenderás a resolver problemas únicos con recursos insuficientes mediante la <b>Gambiarra Intelectual</b>.",
-      "<b>Tu Transformación:</b> Al finalizar, habrás consolidado tu propio <b>Plan Inventivo Personal</b> para los próximos seis meses. No serás un monumento a lo que otros dijeron, sino la plataforma de lo que tú tienes que decir.",
-      "<b>La Promesa Final:</b> Lograrás la <b>Soberanía Cognitiva</b> y la 'Salida Airosa' en situaciones de alta incertidumbre. Pasarás de seguir manuales a cultivar tu propio 'Jardín Infinito' de conocimiento, donde cada idea es un activo de valor estratégico."
+      "<b>El Arbitraje Intelectual:</b> Al finalizar, habrás desarrollado la capacidad de desmantelar metáforas heredadas para construir arquitecturas de valor propias. La <b>Prudencia del Ingenioso</b> será tu filtro para transformar intuiciones en éxitos significativos.",
+      "<b>Resultados Tangibles:</b> Este no es un manual de éxito efímero, sino un ejercicio de robustez estratégica. Pasarás de ser una pieza movida por hilos invisibles a ser el estratega que redibuja las reglas del tablero de la existencia.",
+      "<b>Tu Plan Inventivo:</b> La puerta está abierta, pero cruzarla requiere el valor de reconocer que nuestra forma de razonar ha sido, quizás, demasiado gris. El ingenio le aguarda no como un destino, sino como una forma de caminar por el mundo."
     ],
     type: 'conclusion'
   }
