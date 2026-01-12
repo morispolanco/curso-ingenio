@@ -27,7 +27,11 @@ import {
   Maximize2,
   Minimize2,
   ChevronDown,
-  PenTool
+  PenTool,
+  Flame,
+  Sword,
+  ShieldAlert,
+  Dna
 } from 'lucide-react';
 import { Session, SessionStatus, GlossaryTerm } from './types';
 import { COURSE_SESSIONS } from './constants';
@@ -36,7 +40,7 @@ import { PRESENTATION_SLIDES } from './presentation';
 import { getTutorFeedback } from './services/gemini';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<'landing' | 'course' | 'glossary' | 'presentation'>('landing');
+  const [view, setView] = useState<'landing' | 'course' | 'glossary' | 'presentation' | 'manifesto'>('landing');
   const [sessions, setSessions] = useState<Session[]>(COURSE_SESSIONS);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -206,7 +210,14 @@ const App: React.FC = () => {
               </p>
             </div>
 
-            <div className="pt-20 flex flex-col items-center gap-4">
+            <div className="pt-20 flex flex-col md:flex-row items-center justify-center gap-6">
+              <button 
+                onClick={() => setView('manifesto')}
+                className="group px-10 py-4 bg-white/5 border border-[#d4af37]/30 text-[#d4af37] rounded-full hover:bg-[#d4af37] hover:text-[#0a0505] transition-all duration-300 font-black uppercase tracking-[0.3em] text-xs flex items-center gap-3"
+              >
+                <Flame size={18} className="group-hover:animate-pulse" />
+                Leer Manifiesto
+              </button>
               <button 
                 onClick={() => setView('presentation')}
                 className="group flex flex-col items-center gap-4 text-[#d4af37] hover:text-white transition-all duration-500"
@@ -222,7 +233,7 @@ const App: React.FC = () => {
         <div className="absolute top-12 left-12 border-l border-t border-[#d4af37]/20 w-32 h-32 z-10 hidden md:block" />
         <div className="absolute bottom-12 right-12 border-r border-b border-[#d4af37]/20 w-32 h-32 z-10 hidden md:block" />
 
-        {/* Additional Info Grid (Optional but kept for depth) */}
+        {/* Additional Info Grid */}
         <section className="relative z-10 max-w-7xl mx-auto py-20 px-6 grid md:grid-cols-3 gap-12 border-t border-white/5 bg-black/40 backdrop-blur-sm">
           <div className="space-y-4 p-8 border-r border-white/5">
             <div className="text-[#d4af37] mb-2 opacity-60"><ShieldCheck size={32} /></div>
@@ -285,6 +296,116 @@ const App: React.FC = () => {
       </div>
     );
   }
+
+  const renderManifesto = () => (
+    <div className="min-h-screen bg-[#0a0505] p-6 md:p-16 lg:p-24 relative overflow-hidden animate-in fade-in duration-1000">
+      {/* Decorative background icon */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#d4af37]/5 pointer-events-none">
+        <Sword size={800} strokeWidth={0.5} />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10 space-y-24">
+        <div className="flex justify-between items-start">
+          <div className="space-y-4">
+            <span className="text-[#d4af37] font-black uppercase tracking-[0.6em] text-xs">Posición Editorial</span>
+            <h2 className="text-5xl md:text-7xl font-bold text-white serif leading-tight">
+              MANIFIESTO: <br />
+              <span className="text-[#d4af37]">LA SOBERANÍA DEL INGENIO</span>
+            </h2>
+          </div>
+          <button 
+            onClick={() => setView('landing')}
+            className="p-4 bg-white/5 text-[#d4af37] rounded-full hover:bg-[#d4af37] hover:text-[#0a0505] transition-all"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="space-y-12">
+          <div className="p-10 border-l-4 border-[#d4af37] bg-white/5 backdrop-blur-sm">
+            <h3 className="text-2xl md:text-3xl font-bold text-white serif italic mb-6">Contra la Tiranía del Método, la Rebelión de la Agudeza</h3>
+            <div className="prose prose-invert prose-xl font-serif text-gray-300 leading-relaxed text-justify space-y-6">
+              <p>Vivimos bajo el asedio de la <b>Ratio</b>. La Inteligencia Artificial, en su estado actual, es el triunfo absoluto de la lógica bruta: una máquina estadística formidable capaz de procesar el pasado, pero ciega al futuro. Nos venden "Inteligencia", pero nos entregan Automatización. Nos prometen creatividad, pero nos dan Mímesis.</p>
+              <p>El mercado se inunda de herramientas que te invitan a dejar de pensar. "Escribe con un clic", "Diseña sin saber", "Decide sin dudar". Esta comodidad tiene un precio oculto y terrible: la <b>Atrofia de la Imaginación</b>.</p>
+              <p className="text-[#d4af37] font-black">Nos negamos a ser siervos del algoritmo. Nos negamos a que la máquina sea el arquitecto y el humano el albañil.</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12">
+            <div className="space-y-6 group">
+              <div className="flex items-center gap-4 text-[#d4af37]">
+                <ShieldAlert size={32} />
+                <h4 className="text-xl font-black uppercase tracking-widest">I. EL DIAGNÓSTICO: LA CEGUERA ALGORÍTMICA</h4>
+              </div>
+              <div className="prose prose-invert prose-lg font-serif text-gray-400 leading-relaxed">
+                <p>La IA es una Esponja Digital. Absorbe datos, promedios y patrones. Pero carece de <b>Ingenium</b> (Ingenio): la facultad biológica y filosófica de ver lo invisible, de conectar lo inconexo, de encontrar la excepción que rompe la regla.</p>
+                <ul className="space-y-2 border-l border-white/10 pl-6 mt-4">
+                  <li>La máquina tiene datos; el humano tiene criterio.</li>
+                  <li>La máquina tiene velocidad; el humano tiene oportunidad (<b>Kairos</b>).</li>
+                  <li>La máquina ofrece respuestas; el humano debe plantear las preguntas.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="space-y-6 group">
+              <div className="flex items-center gap-4 text-[#d4af37]">
+                <Dna size={32} />
+                <h4 className="text-xl font-black uppercase tracking-widest">II. NUESTRA MISIÓN: PRÓTESIS, NO MULETAS</h4>
+              </div>
+              <div className="prose prose-invert prose-lg font-serif text-gray-400 leading-relaxed">
+                <p>No creamos software para que trabajes menos. Creamos software para que pienses mejor. Nuestras aplicaciones no son "pilotos automáticos"; son <b>Prótesis de Agudeza</b>. Están diseñadas bajo una Simbiosis Jerárquica:</p>
+                <p className="mt-4"><b>Tú pones el Ingenio:</b> La intuición, la dirección, el "concepto" barroco.<br /><b>La IA pone la Ratio:</b> El procesamiento, la combinatoria, la fuerza bruta.</p>
+                <p className="italic text-[#d4af37]/80 mt-4">Rechazamos la IA que adormece. Abrazamos la IA Adversarial.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#1a0808] p-12 border border-[#d4af37]/20 rounded-3xl relative overflow-hidden group">
+            <div className="absolute -right-20 -bottom-20 text-[#d4af37]/5 group-hover:scale-110 transition-transform duration-700">
+               <Award size={400} />
+            </div>
+            <div className="relative z-10 space-y-8">
+              <div className="flex items-center gap-4 text-[#d4af37]">
+                <Scale size={32} />
+                <h4 className="text-2xl font-black uppercase tracking-widest">III. LA PROMESA: RACIONALIDAD INGENIOSA</h4>
+              </div>
+              <p className="text-3xl text-white font-serif italic border-b border-white/10 pb-8">"En un mundo de respuestas baratas, el valor se refugia en la pregunta cara."</p>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h5 className="text-[#d4af37] font-bold uppercase tracking-widest text-xs mb-2">Ni Magia</h5>
+                  <p className="text-gray-400">No creemos en la "caja negra" que lo resuelve todo por arte de magia. Exigimos explicabilidad y control.</p>
+                </div>
+                <div>
+                  <h5 className="text-[#d4af37] font-bold uppercase tracking-widest text-xs mb-2">Ni Método</h5>
+                  <p className="text-gray-400">No creemos en recetas rígidas ni frameworks estandarizados que matan la innovación. Creemos en la heurística.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center space-y-8 pt-12">
+            <h4 className="text-4xl md:text-5xl font-bold text-white serif">EL LLAMADO</h4>
+            <p className="text-xl text-gray-400 font-serif max-w-2xl mx-auto italic">
+              Este no es un camino para todos. Es para el Arquitecto de Decisiones. Para aquel que entiende que la tecnología no es un sustituto del carácter, sino su amplificador definitivo.
+            </p>
+            <div className="flex flex-col items-center gap-6">
+              <p className="text-[#d4af37] font-black uppercase tracking-[0.4em]">Atrévete a pensar con la IA</p>
+              <button 
+                onClick={() => setView('course')}
+                className="px-16 py-6 bg-[#d4af37] text-[#0a0505] font-black uppercase tracking-[0.5em] text-sm hover:scale-110 hover:shadow-[0_0_50px_rgba(212,175,55,0.3)] transition-all rounded-sm"
+              >
+                Ejercer Soberanía
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <footer className="text-center pt-24 opacity-30">
+          <p className="text-[10px] text-white uppercase tracking-[1em]">Techno-Baroque Manifesto / MMXXV</p>
+        </footer>
+      </div>
+    </div>
+  );
 
   const renderPresentation = () => {
     const slide = PRESENTATION_SLIDES[currentSlideIdx];
@@ -363,6 +484,10 @@ const App: React.FC = () => {
     );
   };
 
+  if (view === 'manifesto') {
+    return renderManifesto();
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-[#fcfaf7]">
       <aside className={`
@@ -414,6 +539,13 @@ const App: React.FC = () => {
         </nav>
 
         <div className="p-4 border-t border-[#5a1a1a] space-y-2 bg-[#2d0a0a]/50">
+          <button 
+            onClick={() => { setView('manifesto'); }}
+            className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all text-sm font-bold uppercase tracking-wider ${view === 'manifesto' ? 'bg-red-900 text-[#d4af37] border border-[#d4af37]/40' : 'text-[#d4af37] hover:bg-white/5'}`}
+          >
+            <Flame size={18} />
+            Manifiesto
+          </button>
           <button 
             onClick={() => { setView('presentation'); setCurrentSlideIdx(0); }}
             className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all text-sm font-bold uppercase tracking-wider ${view === 'presentation' ? 'bg-[#d4af37] text-[#1a0808]' : 'text-[#d4af37] hover:bg-white/5'}`}
@@ -507,7 +639,7 @@ const App: React.FC = () => {
             </section>
           ) : view === 'presentation' ? (
             renderPresentation()
-          ) : (
+          ) : view === 'course' ? (
             <>
               <header className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -694,33 +826,35 @@ const App: React.FC = () => {
                  </div>
               </footer>
             </>
-          )}
+          ) : null}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 p-8 flex justify-between items-center pointer-events-none md:left-80 z-50">
-          <button
-            onClick={handlePrev}
-            disabled={currentIdx === 0 || view !== 'course'}
-            className={`
-              pointer-events-auto p-5 rounded-full bg-white shadow-2xl border border-[#e2d6c3] text-[#4a1414] transition-all
-              ${(currentIdx === 0 || view !== 'course') ? 'opacity-0 scale-50' : 'hover:scale-110 active:scale-95 hover:bg-[#f4ece1]'}
-            `}
-          >
-            <ChevronLeft size={36} />
-          </button>
-          
-          <button
-            onClick={handleNext}
-            disabled={currentIdx === sessions.length - 1 || view !== 'course'}
-            className={`
-              pointer-events-auto px-12 py-6 rounded-full bg-[#4a1414] text-[#d4af37] shadow-2xl flex items-center gap-4 transition-all
-              ${(currentIdx === sessions.length - 1 || view !== 'course') ? 'opacity-0 scale-50' : 'hover:scale-110 active:scale-95 hover:bg-[#2d0a0a] ring-4 ring-[#d4af37]/20'}
-            `}
-          >
-            <span className="font-black uppercase tracking-[0.2em] text-sm">Próxima Agudeza</span>
-            <ChevronRight size={32} />
-          </button>
-        </div>
+        {view === 'course' && (
+          <div className="fixed bottom-0 left-0 right-0 p-8 flex justify-between items-center pointer-events-none md:left-80 z-50">
+            <button
+              onClick={handlePrev}
+              disabled={currentIdx === 0}
+              className={`
+                pointer-events-auto p-5 rounded-full bg-white shadow-2xl border border-[#e2d6c3] text-[#4a1414] transition-all
+                ${(currentIdx === 0) ? 'opacity-0 scale-50' : 'hover:scale-110 active:scale-95 hover:bg-[#f4ece1]'}
+              `}
+            >
+              <ChevronLeft size={36} />
+            </button>
+            
+            <button
+              onClick={handleNext}
+              disabled={currentIdx === sessions.length - 1}
+              className={`
+                pointer-events-auto px-12 py-6 rounded-full bg-[#4a1414] text-[#d4af37] shadow-2xl flex items-center gap-4 transition-all
+                ${(currentIdx === sessions.length - 1) ? 'opacity-0 scale-50' : 'hover:scale-110 active:scale-95 hover:bg-[#2d0a0a] ring-4 ring-[#d4af37]/20'}
+              `}
+            >
+              <span className="font-black uppercase tracking-[0.2em] text-sm">Próxima Agudeza</span>
+              <ChevronRight size={32} />
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );
